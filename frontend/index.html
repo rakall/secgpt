@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pentest-agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 28px;
+            color: #667eea;
+        }
+
+        .daemon-status {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .daemon-status.ok {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .daemon-status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .sessions-list {
+            list-style: none;
+        }
+
+        .sessions-list li {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .sessions-list li:hover {
+            background: #e0e7ff;
+            transform: translateX(5px);
+        }
+
+        .sessions-list li.active {
+            background: #667eea;
+            color: white;
+            font-weight: 500;
+        }
+
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #f5f5f5;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .severity-critical {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+
+        .severity-high {
+            color: #f57c00;
+            font-weight: 600;
+        }
+
+        .severity-medium {
+            color: #fbc02d;
+            font-weight: 600;
+        }
+
+        .severity-low {
+            color: #388e3c;
+            font-weight: 600;
+        }
+
+        .severity-info {
+            color: #1976d2;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #e0e7ff;
+            color: #667eea;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102,126,234,0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper {
+            margin: 20px 0;
+        }
+
+        .file-input-wrapper label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 pentest-agent</h1>
+            <div class="daemon-status" id="daemon-status">Checking...</div>
+        </header>
+
+        <div class="main">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h2>Sessions</h2>
+                <ul class="sessions-list" id="sessions-list">
+                    <li class="loading">Loading sessions...</li>
+                </ul>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <div id="no-session" class="empty">
+                    <p>Select a session to view details</p>
+                </div>
+
+                <div id="session-view" style="display: none;">
+                    <div id="alerts"></div>
+
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="switchTab('summary')">Summary</button>
+                        <button class="tab-button" onclick="switchTab('hosts')">Hosts & Ports</button>
+                        <button class="tab-button" onclick="switchTab('findings')">Findings</button>
+                        <button class="tab-button" onclick="switchTab('endpoints')">Endpoints</button>
+                        <button class="tab-button" onclick="switchTab('actions')">Actions</button>
+                    </div>
+
+                    <!-- Summary Tab -->
+                    <div id="summary" class="tab-content active">
+                        <h3>Session Summary</h3>
+                        <table>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                            <tr>
+                                <td>Target</td>
+                                <td id="summary-target">-</td>
+                            </tr>
+                            <tr>
+                                <td>Hosts</td>
+                                <td id="summary-hosts">0</td>
+                            </tr>
+                            <tr>
+                                <td>Findings</td>
+                                <td id="summary-findings">0</td>
+                            </tr>
+                            <tr>
+                                <td>Endpoints</td>
+                                <td id="summary-endpoints">0</td>
+                            </tr>
+                            <tr>
+                                <td>Created</td>
+                                <td id="summary-created">-</td>
+                            </tr>
+                        </table>
+
+                        <h4>Scope</h4>
+                        <ul id="scope-list" style="margin-left: 20px;">
+                        </ul>
+                    </div>
+
+                    <!-- Hosts Tab -->
+                    <div id="hosts" class="tab-content">
+                        <h3>Hosts & Ports</h3>
+                        <table id="hosts-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Hostname</th>
+                                    <th>OS Guess</th>
+                                    <th>Ports</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hosts-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Findings Tab -->
+                    <div id="findings" class="tab-content">
+                        <h3>Findings & Vulnerabilities</h3>
+                        <table id="findings-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Severity</th>
+                                    <th>CVE</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody id="findings-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Endpoints Tab -->
+                    <div id="endpoints" class="tab-content">
+                        <h3>HTTP Endpoints</h3>
+                        <table id="endpoints-table">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Path</th>
+                                    <th>Parameters</th>
+                                </tr>
+                            </thead>
+                            <tbody id="endpoints-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Actions Tab -->
+                    <div id="actions" class="tab-content">
+                        <h3>Session Actions</h3>
+
+                        <div class="file-input-wrapper">
+                            <label for="ingest-tool">Ingest Tool:</label>
+                            <select id="ingest-tool" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option value="nmap">Nmap (XML)</option>
+                                <option value="nuclei">Nuclei (JSON)</option>
+                                <option value="burp">Burp Suite (XML)</option>
+                                <option value="ffuf">FFUF (JSON)</option>
+                                <option value="openapi">OpenAPI (JSON)</option>
+                                <option value="http-requests">HTTP Requests</option>
+                            </select>
+                        </div>
+
+                        <div class="file-input-wrapper">
+                            <label for="ingest-file">Select File:</label>
+                            <input type="file" id="ingest-file">
+                        </div>
+
+                        <div class="action-buttons">
+                            <button onclick="ingestFile()">Upload & Ingest</button>
+                            <button onclick="downloadReport('markdown')">Download Report (Markdown)</button>
+                            <button onclick="downloadReport('json')">Download Report (JSON)</button>
+                            <button onclick="runAnalysis()">Run Analysis</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentSession = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSessions();
+            checkDaemonStatus();
+            setInterval(checkDaemonStatus, 10000); // Check every 10s
+        });
+
+        async function loadSessions() {
+            try {
+                const response = await fetch(`${API_BASE}/sessions`);
+                const sessions = await response.json();
+
+                const list = document.getElementById('sessions-list');
+                list.innerHTML = '';
+
+                if (sessions.length === 0) {
+                    list.innerHTML = '<li class="empty">No sessions found</li>';
+                    return;
+                }
+
+                sessions.forEach(session => {
+                    const li = document.createElement('li');
+                    li.textContent = `${session.target}`;
+                    li.title = `Hosts: ${session.host_count}, Findings: ${session.finding_count}`;
+                    li.onclick = () => selectSession(session.target);
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading sessions:', error);
+                document.getElementById('sessions-list').innerHTML = '<li class="error">Error loading sessions</li>';
+            }
+        }
+
+        async function selectSession(target) {
+            currentSession = target;
+
+            // Update UI
+            document.querySelectorAll('.sessions-list li').forEach(li => {
+                li.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            document.getElementById('no-session').style.display = 'none';
+            document.getElementById('session-view').style.display = 'block';
+
+            await loadSessionData(target);
+        }
+
+        async function loadSessionData(target) {
+            try {
+                // Load summary
+                const detail = await fetch(`${API_BASE}/sessions/${target}`).then(r => r.json());
+                const hosts = await fetch(`${API_BASE}/sessions/${target}/hosts`).then(r => r.json());
+                const findings = await fetch(`${API_BASE}/sessions/${target}/findings`).then(r => r.json());
+                const endpoints = await fetch(`${API_BASE}/sessions/${target}/endpoints`).then(r => r.json());
+
+                // Update summary
+                document.getElementById('summary-target').textContent = target;
+                document.getElementById('summary-hosts').textContent = hosts.length;
+                document.getElementById('summary-findings').textContent = findings.length;
+                document.getElementById('summary-endpoints').textContent = endpoints.length;
+                document.getElementById('summary-created').textContent = detail.created_at || '-';
+
+                // Update scope
+                const scopeList = document.getElementById('scope-list');
+                scopeList.innerHTML = '';
+                (detail.scope || []).forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    scopeList.appendChild(li);
+                });
+
+                // Update hosts table
+                const hostsTbody = document.getElementById('hosts-tbody');
+                hostsTbody.innerHTML = '';
+                hosts.forEach(host => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${host.ip_address}</td>
+                        <td>${host.hostname || '-'}</td>
+                        <td>${host.os_guess || '-'}</td>
+                        <td><span class="badge">${host.port_count} ports</span></td>
+                    `;
+                    hostsTbody.appendChild(tr);
+                });
+
+                // Update findings table
+                const findingsTbody = document.getElementById('findings-tbody');
+                findingsTbody.innerHTML = '';
+                findings.forEach(finding => {
+                    const tr = document.createElement('tr');
+                    const severity = finding.severity || 'unknown';
+                    const severityClass = `severity-${severity.toLowerCase()}`;
+                    tr.innerHTML = `
+                        <td>${finding.title}</td>
+                        <td><span class="${severityClass}">${severity}</span></td>
+                        <td>${finding.cve_id || '-'}</td>
+                        <td>${finding.source_tool}</td>
+                    `;
+                    findingsTbody.appendChild(tr);
+                });
+
+                // Update endpoints table
+                const endpointsTbody = document.getElementById('endpoints-tbody');
+                endpointsTbody.innerHTML = '';
+                endpoints.forEach(endpoint => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="badge">${endpoint.method}</span></td>
+                        <td>${endpoint.path}</td>
+                        <td>${endpoint.parameters || '-'}</td>
+                    `;
+                    endpointsTbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                showAlert(`Error loading session data: ${error.message}`, 'error');
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function ingestFile() {
+            if (!currentSession) {
+                showAlert('No session selected', 'error');
+                return;
+            }
+
+            const tool = document.getElementById('ingest-tool').value;
+            const file = document.getElementById('ingest-file').files[0];
+
+            if (!file) {
+                showAlert('Please select a file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/sessions/${currentSession}/ingest/${tool}`,
+                    { method: 'POST', body: formData }
+                );
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail);
+                }
+
+                showAlert(`Successfully ingested ${tool} data`, 'success');
+                document.getElementById('ingest-file').value = '';
+                await loadSessionData(currentSession);
+
+            } catch (error) {
+                showAlert(`Ingestion error: ${error.message}`, 'error');
+            }
+        }
+
+        async function downloadReport(format) {
+            if (!currentSession) {
+                showAlert('No session selected', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/sessions/${currentSession}/report?format=${format}`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Report generation failed');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${currentSession}_report.${format === 'json' ? 'json' : 'md'}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+            } catch (error) {
+                showAlert(`Download error: ${error.message}`, 'error');
+            }
+        }
+
+        async function runAnalysis() {
+            if (!currentSession) {
+                showAlert('No session selected', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/sessions/${currentSession}/analyze`,
+                    { method: 'POST' }
+                );
+
+                if (!response.ok) {
+                    throw new Error('Analysis request failed');
+                }
+
+                showAlert('Analysis started in background', 'success');
+
+            } catch (error) {
+                showAlert(`Analysis error: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkDaemonStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/daemon/health`);
+                const status = await response.json();
+
+                const statusEl = document.getElementById('daemon-status');
+                if (status.status === 'ok') {
+                    statusEl.textContent = '✓ Daemon Running';
+                    statusEl.className = 'daemon-status ok';
+                } else {
+                    statusEl.textContent = '✗ Daemon Offline';
+                    statusEl.className = 'daemon-status error';
+                }
+            } catch (error) {
+                document.getElementById('daemon-status').textContent = '✗ Connection Error';
+                document.getElementById('daemon-status').className = 'daemon-status error';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alerts = document.getElementById('alerts');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = message;
+            alerts.appendChild(div);
+
+            setTimeout(() => {
+                div.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

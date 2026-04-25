@@ -45,9 +45,32 @@ temp/
 *.pdf
 docs/
 
-# Scan outputs
+# Scan outputs and raw data
 *.xml
 *.json
+!.env.example
+!docs/**/*.json
+!pentest_agent/**/*.json
 
-# Session data
+# Docker and containerization
+.env.local
+.env.*.local
+docker-compose.override.yml
+
+# Runtime directories (created by Docker/application)
+config/
+data/
 sessions/
+models/
+kb-data/
+scans/
+tmp/
+temp/
+
+# Session and runtime artifacts
+*.db
+*.db-wal
+*.db-shm
+daemon.pid
+daemon.sock
+daemon.log

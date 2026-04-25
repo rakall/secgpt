@@ -1,0 +1,73 @@
+# Docker build context exclusions
+# Keep image size down by excluding unnecessary files
+
+# Git
+.git
+.gitignore
+.github
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode
+.vscode-server
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-specific
+sessions/
+config/
+data/
+models/
+kb-data/
+scans/
+*.db
+*.db-wal
+*.db-shm
+*.log
+.env
+.env.local
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# OS files
+Thumbs.db
+.DS_Store

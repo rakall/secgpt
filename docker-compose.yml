@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pentest-agent
+    restart: always
+    ports:
+      - "8080:8080"      # Web API and UI
+      - "47291:47291"    # Daemon API (optional, for debugging)
+    
+    volumes:
+      # Configuration directory (user config, secrets, active session marker)
+      - ./config:/app/config
+      
+      # Data directory (daemon state, ChromaDB, daemon socket/PID)
+      - ./data:/app/data
+      
+      # Sessions directory (scan results, reports, scope files)
+      - ./sessions:/app/sessions
+      
+      # Optional: Custom embedding model (mount if using custom GGUF model)
+      # - ./models:/app/models
+      
+      # Optional: Knowledge base data (for manual ingestion via CLI)
+      # - ./kb-data:/app/kb-data
+    
+    environment:
+      # Configuration paths (set by Dockerfile, but can override here)
+      CONFIG_DIR: /app/config
+      DATA_DIR: /app/data
+      
+      # Active LLM provider: local, openai, anthropic, google, groq
+      ACTIVE_PROVIDER: ${ACTIVE_PROVIDER:-local}
+      
+      # API Keys (only needed if ACTIVE_PROVIDER != local)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      
+      # Optional: Custom LLM model name (depends on provider)
+      LLM_MODEL: ${LLM_MODEL:-gpt-4-turbo}
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:47291/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    
+    # Optional resource limits
+    # resources:
+    #   limits:
+    #     cpus: '2'
+    #     memory: 4G
+    #   reservations:
+    #     cpus: '1'
+    #     memory: 2G
