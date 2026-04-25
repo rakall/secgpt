@@ -20,12 +20,19 @@ pnpm-debug.log*
 __pycache__/
 *.py[cod]
 *.pyo
+*.so
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .venv/
 venv/
 env/
+.Python
+*.egg-info/
+.eggs/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
 
 node_modules/
 dist/
