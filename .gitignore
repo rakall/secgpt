@@ -44,3 +44,10 @@ tmp/
 temp/
 *.pdf
 docs/
+
+# Scan outputs
+*.xml
+*.json
+
+# Session data
+sessions/
