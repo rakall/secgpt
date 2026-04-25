@@ -1,4 +1,4 @@
-name: SonarQube Execution
+﻿name: SonarQube Execution
 
 on:
   push:
