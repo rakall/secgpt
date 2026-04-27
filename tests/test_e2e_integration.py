@@ -60,7 +60,7 @@ def test_session_lifecycle():
         print(f"  ✗ FAIL: {e}")
         try:
             shutil.rmtree(test_session_dir)
-        except:
+        except Exception:
             pass
         return False
 
@@ -90,7 +90,7 @@ def test_ingestion_utilities():
             normalized = normalize_severity(raw)
             assert normalized == expected, f"Normalization failed: {raw} -> {normalized}"
         
-        print(f"  ✓ PASS: Host ID and severity normalization working")
+        print("  ✓ PASS: Host ID and severity normalization working")
         return True
         
     except Exception as e:
@@ -134,7 +134,7 @@ def test_analysis_components():
         assert hash1 == hash2, "Hashing not deterministic"
         assert len(hash1) == 64, "Hash should be SHA256"
         
-        print(f"  ✓ PASS: Intent classification, canonicalization, hashing working")
+        print("  ✓ PASS: Intent classification, canonicalization, hashing working")
         return True
         
     except Exception as e:
@@ -175,7 +175,7 @@ def test_report_generation():
             conn.close()
             print(f"    - Queried real session: {len(scope)} scope, {len(hosts)} hosts, {len(endpoints)} endpoints, {len(findings)} findings")
         
-        print(f"  ✓ PASS: Report generation queries working")
+        print("  ✓ PASS: Report generation queries working")
         return True
         
     except Exception as e:
@@ -191,7 +191,7 @@ def test_sanitization():
         from pentest_agent.ingest.sanitizer import Sanitizer
         
         test_cases = [
-            "password=secret123",
+            "password=secret123",  # Test data for sanitizer
             "api_key=sk-1234567890",
             "token:abcd1234efgh5678",
         ]
@@ -233,7 +233,7 @@ def test_logging_infrastructure():
         assert "timestamp" in formatted, "Formatted event missing timestamp"
         assert formatted["event_type"] == "test", "Event type mismatch"
         
-        print(f"  ✓ PASS: Audit event creation and formatting working")
+        print("  ✓ PASS: Audit event creation and formatting working")
         return True
         
     except Exception as e:
@@ -276,7 +276,7 @@ def test_validators():
         except ValidationError:
             pass  # Expected
         
-        print(f"  ✓ PASS: Validators rejecting invalid inputs")
+        print("  ✓ PASS: Validators rejecting invalid inputs")
         return True
         
     except Exception as e:

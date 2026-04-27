@@ -192,7 +192,7 @@ def test_validation():
     }
     try:
         result = validate_upsert_request(valid_upsert)
-        print(f"  ✓ Valid upsert request")
+        print("  ✓ Valid upsert request")
         tests_passed += 1
     except Exception as e:
         print(f"  ❌ Unexpected rejection: {e}")
@@ -240,7 +240,7 @@ def test_validation():
     print("\n--- Test 11: validate_embed_request() - Valid ---")
     try:
         validate_embed_request({"text": "test text"})
-        print(f"  ✓ Valid embed request")
+        print("  ✓ Valid embed request")
         tests_passed += 1
     except Exception as e:
         print(f"  ❌ Unexpected rejection: {e}")

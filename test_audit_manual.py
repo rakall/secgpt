@@ -38,7 +38,7 @@ def test_audit_logging():
     # Remove existing audit log for clean test
     if audit_log_path.exists():
         audit_log_path.unlink()
-        print(f"✓ Removed existing audit log for clean test")
+        print("✓ Removed existing audit log for clean test")
     
     # Test 1: Log analysis event
     print("\n--- Test 1: log_analysis_event() ---")

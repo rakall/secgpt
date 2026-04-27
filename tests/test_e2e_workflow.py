@@ -77,9 +77,9 @@ def run_e2e_workflow():
             print(f"  ✓ {dir_name}/ directory created")
     
     if session_db.exists():
-        print(f"  ✓ session.db created")
+        print("  ✓ session.db created")
     else:
-        print(f"  ❌ session.db not found")
+        print("  ❌ session.db not found")
         return False
     
     # Phase 2: Scope Definition
@@ -102,7 +102,7 @@ def run_e2e_workflow():
         print(f"   stdout: {result.stdout}")
         return False
     
-    print(f"✓ Added scope: 10.0.1.0/24 (CIDR)")
+    print("✓ Added scope: 10.0.1.0/24 (CIDR)")
     
     # Step 2.2: Add specific target
     result = subprocess.run(
@@ -118,7 +118,7 @@ def run_e2e_workflow():
         print(f"   stdout: {result.stdout}")
         return False
     
-    print(f"✓ Added scope: 10.0.1.50 (IP)")
+    print("✓ Added scope: 10.0.1.50 (IP)")
     
     # Step 2.3: Verify scope
     print("\n[2.3] Verifying scope...")
@@ -137,9 +137,9 @@ def run_e2e_workflow():
     has_ip = any(stype == "ip" and value == "10.0.1.50" for stype, value in scope_data)
     
     if has_cidr and has_ip:
-        print(f"✓ Scope verified (2 entries)")
+        print("✓ Scope verified (2 entries)")
     else:
-        print(f"❌ Scope verification failed - expected CIDR and IP entries")
+        print("❌ Scope verification failed - expected CIDR and IP entries")
         print(f"   Has CIDR: {has_cidr}, Has IP: {has_ip}")
         return False
     
@@ -170,9 +170,9 @@ def run_e2e_workflow():
         print(f"   stdout: {result.stdout}")
         return False
     
-    print(f"✓ Nmap data ingested")
-    print(f"  Hosts discovered: 1")
-    print(f"  Ports found: 5 (22, 80, 443, 3306, 8080)")
+    print("✓ Nmap data ingested")
+    print("  Hosts discovered: 1")
+    print("  Ports found: 5 (22, 80, 443, 3306, 8080)")
     
     # Step 3.2: Ingest nuclei scan
     print("\n[3.2] Ingesting Nuclei vulnerability scan...")
@@ -192,12 +192,12 @@ def run_e2e_workflow():
         print(f"   stdout: {result.stdout}")
         return False
     
-    print(f"✓ Nuclei data ingested")
-    print(f"  Findings: 4")
-    print(f"  - CVE-2021-44228 (Log4j RCE) - CRITICAL")
-    print(f"  - SQL Injection - HIGH")
-    print(f"  - CVE-2023-23752 (Joomla) - MEDIUM")
-    print(f"  - PHP Info Disclosure - LOW")
+    print("✓ Nuclei data ingested")
+    print("  Findings: 4")
+    print("  - CVE-2021-44228 (Log4j RCE) - CRITICAL")
+    print("  - SQL Injection - HIGH")
+    print("  - CVE-2023-23752 (Joomla) - MEDIUM")
+    print("  - PHP Info Disclosure - LOW")
     
     # Step 3.3: Ingest OpenAPI spec
     print("\n[3.3] Ingesting OpenAPI specification...")
@@ -217,11 +217,11 @@ def run_e2e_workflow():
         print(f"   stdout: {result.stdout}")
         return False
     
-    print(f"✓ OpenAPI data ingested")
-    print(f"  Endpoints: 3")
-    print(f"  - GET /users")
-    print(f"  - POST /users")
-    print(f"  - GET /admin/logs")
+    print("✓ OpenAPI data ingested")
+    print("  Endpoints: 3")
+    print("  - GET /users")
+    print("  - POST /users")
+    print("  - GET /admin/logs")
     
     # Step 3.4: Verify ingested data
     print("\n[3.4] Verifying ingested data in database...")
@@ -347,13 +347,13 @@ def run_e2e_workflow():
                 print(f"  ❌ Missing JSON keys: {missing_keys}")
                 return False
             
-            print(f"  ✓ JSON structure valid")
+            print("  ✓ JSON structure valid")
             print(f"  ✓ Metadata: {export_data['metadata']}")
         except Exception as e:
             print(f"  ❌ JSON validation failed: {e}")
             return False
     else:
-        print(f"❌ No JSON files found")
+        print("❌ No JSON files found")
         return False
     
     # Phase 6: Audit Trail Validation
@@ -380,13 +380,13 @@ def run_e2e_workflow():
                 entry = json.loads(line.strip())
                 valid_entries += 1
                 event_types.add(entry.get("event_type", "unknown"))
-            except:
+            except Exception:
                 pass
         
         print(f"  ✓ Valid JSON entries: {valid_entries}/{len(log_lines)}")
         print(f"  ✓ Event types logged: {', '.join(sorted(event_types))}")
     else:
-        print(f"⚠ No audit log found (expected for report generation)")
+        print("⚠ No audit log found (expected for report generation)")
     
     # Summary
     print("\n" + "=" * 70)

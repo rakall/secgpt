@@ -68,7 +68,7 @@ def test_report_generation():
         
         conn.close()
         
-        print(f"  ✓ PASS: Report queries successful")
+        print("  ✓ PASS: Report queries successful")
         print(f"    - Scope entries: {len(scope_entries)}")
         print(f"    - Hosts: {len(hosts)}")
         print(f"    - Endpoints: {len(endpoints)}")
@@ -124,9 +124,9 @@ def test_audit_logging():
         assert "run_id" not in dict_with_none, "None values should be excluded from to_dict()"
         
         print("  ✓ PASS: Audit logging infrastructure working")
-        print(f"    - AuditEvent creation successful")
-        print(f"    - format_audit_event() adds timestamp")
-        print(f"    - None exclusion working")
+        print("    - AuditEvent creation successful")
+        print("    - format_audit_event() adds timestamp")
+        print("    - None exclusion working")
         return True
         
     except ImportError as e:
@@ -187,8 +187,8 @@ def test_rpc_validation():
                 pass  # Expected
         
         print("  ✓ PASS: RPC validation working")
-        print(f"    - Collection name validation: OK")
-        print(f"    - K parameter validation: OK")
+        print("    - Collection name validation: OK")
+        print("    - K parameter validation: OK")
         return True
         
     except ImportError as e:
@@ -242,8 +242,8 @@ def test_rule_generation():
                 return False
         
         print("  ✓ PASS: Rule generation patterns working")
-        print(f"    - CVE format validation: OK")
-        print(f"    - ATT&CK ID validation: OK")
+        print("    - CVE format validation: OK")
+        print("    - ATT&CK ID validation: OK")
         return True
         
     except ImportError as e:
@@ -369,7 +369,7 @@ def test_validator_comprehensive():
         invalid_filter = {"invalid_key": "value"}
         try:
             validate_query_filters("nvd", invalid_filter)
-            print(f"  ✗ FAIL: Invalid filter accepted")
+            print("  ✗ FAIL: Invalid filter accepted")
             return False
         except ValidationError:
             pass  # Expected
@@ -398,7 +398,7 @@ def test_validator_comprehensive():
         
         try:
             validate_upsert_request(invalid_upsert)
-            print(f"  ✗ FAIL: Length mismatch upsert accepted")
+            print("  ✗ FAIL: Length mismatch upsert accepted")
             return False
         except ValidationError:
             pass  # Expected
@@ -417,15 +417,15 @@ def test_validator_comprehensive():
         
         try:
             validate_embed_request(invalid_embed)
-            print(f"  ✗ FAIL: Excessive length embed accepted")
+            print("  ✗ FAIL: Excessive length embed accepted")
             return False
         except ValidationError:
             pass  # Expected
         
         print("  ✓ PASS: Comprehensive validator tests passing")
-        print(f"    - Query filter validation: OK")
-        print(f"    - Upsert validation: OK")
-        print(f"    - Embed validation: OK")
+        print("    - Query filter validation: OK")
+        print("    - Upsert validation: OK")
+        print("    - Embed validation: OK")
         return True
         
     except ImportError as e:

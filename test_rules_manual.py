@@ -108,7 +108,7 @@ def test_rule_generation():
     import re
     from datetime import datetime
     
-    safe_name = re.sub(r'[^a-zA-Z0-9_]', '_', finding_id)
+    safe_name = re.sub(r'\W', '_', finding_id)
     yara_rule_name = f"detect_{safe_name}"
     
     yara_content = f"""/*
@@ -171,7 +171,7 @@ rule {yara_rule_name} {{
         for i, line in enumerate(content.split("\n")[:15], 1):
             print(f"    {i:2d}: {line}")
     else:
-        print(f"  ❌ YARA file not created")
+        print("  ❌ YARA file not created")
         return False
     
     # Test 2: Generate Sigma rule for CVE
@@ -179,7 +179,7 @@ rule {yara_rule_name} {{
     
     import uuid
     cve_ref = "CVE-2024-99999"
-    safe_name_cve = re.sub(r'[^a-zA-Z0-9_]', '_', cve_ref)
+    safe_name_cve = re.sub(r'\W', '_', cve_ref)
     
     sigma_uuid = str(uuid.uuid4())
     sigma_content = f"""# AUTO-GENERATED STUB — REVIEW BEFORE USE
@@ -244,7 +244,7 @@ level: medium
         for i, line in enumerate(content.split("\n")[:15], 1):
             print(f"    {i:2d}: {line}")
     else:
-        print(f"  ❌ Sigma file not created")
+        print("  ❌ Sigma file not created")
         return False
     
     # Test 3: Verify file writing to sessions/[target]/rules/
@@ -258,9 +258,9 @@ level: medium
         print(f"  Actual: {actual_dir}")
         # As long as it's in the rules directory, it's fine
         if actual_dir.name == "rules" and actual_dir.parent.name == "192.168.100.122":
-            print(f"  ✓ Location is correct (path resolution difference)")
+            print("  ✓ Location is correct (path resolution difference)")
         else:
-            print(f"  ❌ Wrong location")
+            print("  ❌ Wrong location")
             return False
     
     # List all rule files
@@ -278,7 +278,7 @@ level: medium
     ]
     
     for original, expected_sanitized in test_names:
-        sanitized = re.sub(r'[^a-zA-Z0-9_]', '_', original)
+        sanitized = re.sub(r'\W', '_', original)
         if sanitized == expected_sanitized:
             print(f"  ✓ '{original}' → '{sanitized}'")
         else:
@@ -287,11 +287,11 @@ level: medium
     
     # Test special characters get replaced
     special_chars = "finding<>:\"\\|?*"
-    sanitized = re.sub(r'[^a-zA-Z0-9_]', '_', special_chars)
+    sanitized = re.sub(r'\W', '_', special_chars)
     if sanitized.startswith("finding") and all(c == '_' or c.isalnum() for c in sanitized):
         print(f"  ✓ '{special_chars}' → '{sanitized}' (special chars sanitized)")
     else:
-        print(f"  ❌ Special char sanitization failed")
+        print("  ❌ Special char sanitization failed")
         return False
     
     conn.close()

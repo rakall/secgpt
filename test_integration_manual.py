@@ -137,7 +137,7 @@ def test_integration_points():
     # Parse output_json
     try:
         output_json = json.loads(analysis_data['output_json'])
-        print(f"  ✓ Analysis output parsed successfully")
+        print("  ✓ Analysis output parsed successfully")
         print(f"    - Summary present: {'summary' in output_json}")
         print(f"    - Attack paths: {len(output_json.get('attack_paths', []))}")
         print(f"    - ATT&CK mappings: {len(output_json.get('attck_mapping', []))}")
@@ -217,7 +217,7 @@ def test_integration_points():
         if test_finding:
             print(f"    - Test finding present: {test_finding['title'][:50]}...")
         else:
-            print(f"    - Using existing finding data")
+            print("    - Using existing finding data")
     
     # Test 6: Session switching capability
     print("\n--- Test 6: Multi-Session Support ---")
@@ -251,7 +251,7 @@ def test_integration_points():
             try:
                 json.loads(line.strip())
                 valid_count += 1
-            except:
+            except Exception:
                 pass
         
         print(f"  ✓ Valid JSON entries: {valid_count}/{len(log_lines)}")

@@ -110,7 +110,7 @@ def run_streamlined_e2e():
     hosts_count = conn.execute("SELECT COUNT(*) FROM hosts").fetchone()[0]
     ports_count = conn.execute("SELECT COUNT(*) FROM ports").fetchone()[0]
     
-    print(f"PASS: Nmap ingestion complete")
+    print("PASS: Nmap ingestion complete")
     print(f"  - Hosts: {hosts_count}")
     print(f"  - Ports: {ports_count}")
     
@@ -133,7 +133,7 @@ def run_streamlined_e2e():
     
     findings_count = conn.execute("SELECT COUNT(*) FROM findings").fetchone()[0]
     
-    print(f"PASS: Nuclei ingestion complete")
+    print("PASS: Nuclei ingestion complete")
     print(f"  - Findings: {findings_count}")
     
     # OpenAPI
@@ -155,7 +155,7 @@ def run_streamlined_e2e():
     
     endpoints_count = conn.execute("SELECT COUNT(*) FROM endpoints").fetchone()[0]
     
-    print(f"PASS: OpenAPI ingestion complete")
+    print("PASS: OpenAPI ingestion complete")
     print(f"  - Endpoints: {endpoints_count}")
     
     # Phase 4: Report Generation
@@ -212,7 +212,7 @@ def run_streamlined_e2e():
     json_path = reports_dir / "e2e_test.json"
     json_path.write_text(json.dumps(json_export, indent=2), encoding="utf-8")
     
-    print(f"PASS: JSON export generated")
+    print("PASS: JSON export generated")
     print(f"  - Saved: {json_path}")
     
     # Verify JSON structure
@@ -248,13 +248,13 @@ def run_streamlined_e2e():
         medium = sum(1 for f in findings_data if f.get("normalized_severity") == "MEDIUM")
         low = sum(1 for f in findings_data if f.get("normalized_severity") == "LOW")
         
-        print(f"\nFindings by Severity:")
+        print("\nFindings by Severity:")
         print(f"  - CRITICAL: {critical}")
         print(f"  - HIGH: {high}")
         print(f"  - MEDIUM: {medium}")
         print(f"  - LOW: {low}")
     
-    print(f"\nReports Generated:")
+    print("\nReports Generated:")
     print(f"  - {md_path}")
     print(f"  - {json_path}")
     
